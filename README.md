@@ -30,6 +30,28 @@ Nei menu: FRECCE SU/GIÙ + INVIO, oppure il mouse.
 
 Il jar va avviato dalla cartella del progetto (`java -jar build/libs/SandsOfTime.jar`), perché il gioco legge i file da `assets/`.
 
+## Versione web (browser)
+
+Il gioco si compila anche in JavaScript con [gdx-teavm](https://github.com/xpenatan/gdx-teavm), quindi si gioca nel browser senza installare niente.
+
+Ad ogni push su `main`, **GitHub Actions** (`.github/workflows/build.yml`) fa tre cose:
+
+1. compila il gioco desktop e lo mette tra gli *Artifacts* della run (`SandsOfTime-desktop`, pronto da scaricare);
+2. compila la versione web e la pubblica sul ramo **`web`** del repository;
+3. la pubblica su **GitHub Pages**, se le Pages sono attivate.
+
+Per provarla sul tuo PC: `./gradlew :web:gdx_teavm_web_js_run` e poi apri http://localhost:8080
+
+**Pubblicarla online**, due possibilità:
+
+- **GitHub Pages:** *Settings → Pages → Build and deployment → Source: GitHub Actions*. Poi rilancia la workflow (*Actions → Build e pubblicazione → Run workflow*). L'indirizzo sarà `https://chrifilvpn.github.io/sands-of-time/`.
+- **Render:** crea un **Static Site** (non un Web Service) collegato a questo repository con:
+  - Branch: `web`
+  - Build Command: `echo ok`
+  - Publish Directory: `.`
+
+Nel browser i bottoni "Chiudi gioco" non compaiono, e la musica parte al primo tasto o click (i browser non permettono l'audio prima che l'utente interagisca).
+
 ## Struttura
 
 ```
@@ -40,6 +62,7 @@ src/
   Oggetto, TilemapActor, BaseActor                oggetti della mappa e attori
   Risorse                                         font, immagini, suoni e musica (caricati una volta)
   ListaBottoni, Particelle                        bottoni da tastiera/mouse, effetti grafici
+web/                                              versione browser (TeaVM): WebLauncher + build.gradle
   Save, StatoPartita                              salvataggio automatico e statistiche
 assets/
   mappaN_presente.tmx / mappaN_passato.tmx        i livelli (Tiled)
