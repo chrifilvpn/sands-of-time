@@ -57,7 +57,6 @@ public class FineScreen extends BaseScreen
             public void clicked(InputEvent event, float x, float y) { torna(); }
         });
 
-        Risorse.fermaMusica();
         Risorse.musica(false);
     }
 

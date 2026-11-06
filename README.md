@@ -115,7 +115,7 @@ Proprietà della mappa del presente (*Mappa → Proprietà mappa*):
 - Telecamera morbida.
 - Titolo all'inizio di ogni livello, HUD con livello ed epoca, suggerimenti sui comandi.
 - Effetti sonori (salto, morte, viaggio nel tempo, artefatto, porta, menu, vittoria).
-- La musica continua da un livello all'altro e si ferma in pausa.
+- Una sola colonna sonora (la musica del passato) per tutto il gioco: non cambia con il viaggio nel tempo, continua da un livello all'altro e si ferma in pausa.
 - Menu e pausa usabili da tastiera; "Continua" disattivato se non c'è un salvataggio. Il menu di pausa contiene Riprendi, Ricomincia livello, Menu e Chiudi, più l'elenco dei comandi.
 - Schermata finale con tempo di gioco, numero di morti e crediti.
 - Il gioco va in pausa da solo se si riduce a icona la finestra.

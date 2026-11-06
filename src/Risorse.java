@@ -42,7 +42,8 @@ public class Risorse
 
     // ---------------- audio ----------------
     public static Sound sSalto, sMorte, sTempo, sBloccato, sArtefatto, sPorta, sClick, sSeleziona, sVittoria;
-    public static Music musicaPresente, musicaPassato;
+    /** Colonna sonora unica del gioco (la musica del passato), sempre la stessa. */
+    public static Music musica;
     public static final float VOLUME_MUSICA = 0.45f;
     public static final float VOLUME_EFFETTI = 0.6f;
     private static boolean muto = false;
@@ -108,10 +109,8 @@ public class Risorse
         sSeleziona = suono("seleziona");
         sVittoria  = suono("vittoria");
 
-        musicaPresente = registra(Gdx.audio.newMusic(Gdx.files.internal("assets/musica_presente.mp3")));
-        musicaPresente.setLooping(true);
-        musicaPassato = registra(Gdx.audio.newMusic(Gdx.files.internal("assets/musica_passato.mp3")));
-        musicaPassato.setLooping(true);
+        musica = registra(Gdx.audio.newMusic(Gdx.files.internal("assets/musica_passato.mp3")));
+        musica.setLooping(true);
 
         numeroLivelli = 0;
         while (Gdx.files.internal("assets/mappa" + (numeroLivelli + 1) + "_presente.tmx").exists())
@@ -220,37 +219,31 @@ public class Risorse
     }
 
     /**
-     * Fa suonare la musica dell'epoca indicata, mettendo in pausa l'altra.
-     * La musica NON riparte da capo quando si cambia livello: continua da dove era.
+     * Fa suonare la colonna sonora del gioco. È sempre la stessa (quella del passato):
+     * non cambia con il viaggio nel tempo e non riparte da capo cambiando livello.
+     * Il parametro è tenuto solo per compatibilità con il resto del codice e viene ignorato.
      */
     public static void musica(boolean passato)
     {
-        Music attiva = passato ? musicaPassato : musicaPresente;
-        Music altra  = passato ? musicaPresente : musicaPassato;
-        if (altra.isPlaying()) altra.pause();
-        attiva.setVolume(muto ? 0 : VOLUME_MUSICA);
-        if (!attiva.isPlaying()) attiva.play();
+        musica.setVolume(muto ? 0 : VOLUME_MUSICA);
+        if (!musica.isPlaying()) musica.play();
     }
 
     public static void pausaMusica()
     {
-        if (musicaPresente.isPlaying()) musicaPresente.pause();
-        if (musicaPassato.isPlaying()) musicaPassato.pause();
+        if (musica.isPlaying()) musica.pause();
     }
 
     public static void fermaMusica()
     {
-        musicaPresente.stop();
-        musicaPassato.stop();
+        musica.stop();
     }
 
     /** Tasto M: toglie / rimette l'audio. */
     public static void alternaMuto()
     {
         muto = !muto;
-        float v = muto ? 0 : VOLUME_MUSICA;
-        musicaPresente.setVolume(v);
-        musicaPassato.setVolume(v);
+        musica.setVolume(muto ? 0 : VOLUME_MUSICA);
     }
 
     public static boolean isMuto()
