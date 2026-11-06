@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +83,9 @@ public class LevelScreen extends BaseScreen
     private Label cutTitolo, cutSotto;
 
     private Image pausaOverlay, pausaPannello;
-    private Label pausaTitolo, pausaAiuto;
+    private Label pausaTitolo;
+    private final ArrayList<Label> pausaAiuto = new ArrayList<Label>();
+    private Image messaggioSfondo;
     private ListaBottoni pausaBottoni;
 
     private Image goOverlay;
@@ -273,6 +274,7 @@ public class LevelScreen extends BaseScreen
         centra(sottotitoloLivello, ALTEZZA * 0.62f - 34);
         sottotitoloLivello.getColor().a = 0;
 
+        messaggioSfondo = rettangolo(Color.BLACK, 0f);
         messaggio = etichettaUi("", Risorse.fontNormale, Color.WHITE);
         messaggio.getColor().a = 0;
 
@@ -307,16 +309,28 @@ public class LevelScreen extends BaseScreen
         pausaBottoni.aggiungi("MENU PRINCIPALE",  270, 242, 260, 36, new Runnable() { public void run() { vaiAlMenu(); } });
         if (!Risorse.isWeb())
             pausaBottoni.aggiungi("CHIUDI GIOCO", 270, 198, 260, 36, new Runnable() { public void run() { Gdx.app.exit(); } });
-        pausaAiuto = etichettaUi(
-                "FRECCE / A D    muoviti\n" +
-                "SPAZIO / W      salta\n" +
-                "E    interagisci\n" +
-                "T    viaggia nel tempo\n" +
-                "ESC  pausa    M  audio\n" +
-                "F11  schermo intero", Risorse.fontPiccolo, new Color(0.9f, 0.85f, 0.7f, 1f));
-        pausaAiuto.setAlignment(Align.left);
-        pausaAiuto.pack();
-        pausaAiuto.setPosition(Math.round(LARGHEZZA / 2f - pausaAiuto.getWidth() / 2f), 62);
+        // elenco dei comandi: una riga per etichetta, così l'interlinea è sempre corretta
+        String[][] comandi = {
+                {"FRECCE / A D", "muoviti"},
+                {"SPAZIO / W", "salta"},
+                {"E", "interagisci"},
+                {"T", "viaggia nel tempo"},
+                {"ESC / P", "pausa"},
+                {"M", "audio on/off"},
+                {"F11", "schermo intero"}
+        };
+        Color coloreTasto = new Color(1f, 0.82f, 0.35f, 1f);
+        Color coloreDescr = new Color(0.9f, 0.85f, 0.75f, 1f);
+        float yRiga = Risorse.isWeb() ? 200 : 168;
+        for (String[] c : comandi) {
+            Label tasto = etichettaUi(c[0], Risorse.fontPiccolo, coloreTasto);
+            tasto.setPosition(250, yRiga);
+            Label descr = etichettaUi(c[1], Risorse.fontPiccolo, coloreDescr);
+            descr.setPosition(400, yRiga);
+            pausaAiuto.add(tasto);
+            pausaAiuto.add(descr);
+            yRiga -= 17;
+        }
         mostraPausa(false);
 
         // ---------- game over ----------
@@ -345,11 +359,17 @@ public class LevelScreen extends BaseScreen
     /** Messaggio temporaneo in basso al centro. */
     private void mostraMessaggio(String testo, float secondi)
     {
+        // in alto, su una striscia scura: non copre più il personaggio
         messaggio.setText(testo);
-        centra(messaggio, 84);
+        centra(messaggio, ALTEZZA - 92);
+        messaggioSfondo.setBounds(messaggio.getX() - 14, messaggio.getY() - 9,
+                messaggio.getWidth() + 28, messaggio.getHeight() + 18);
         messaggio.clearActions();
         messaggio.getColor().a = 0;
         messaggio.addAction(Actions.sequence(Actions.fadeIn(0.3f), Actions.delay(secondi), Actions.fadeOut(0.6f)));
+        messaggioSfondo.clearActions();
+        messaggioSfondo.getColor().a = 0;
+        messaggioSfondo.addAction(Actions.sequence(Actions.alpha(0.55f, 0.3f), Actions.delay(secondi), Actions.fadeOut(0.6f)));
     }
 
     private void mostraPausa(boolean v)
@@ -357,12 +377,12 @@ public class LevelScreen extends BaseScreen
         pausaOverlay.setVisible(v);
         pausaPannello.setVisible(v);
         pausaTitolo.setVisible(v);
-        pausaAiuto.setVisible(v);
+        for (Label l : pausaAiuto) l.setVisible(v);
         if (v) {
             pausaOverlay.toFront();
             pausaPannello.toFront();
             pausaTitolo.toFront();
-            pausaAiuto.toFront();
+            for (Label l : pausaAiuto) l.toFront();
             pausaBottoni.setSelezionato(0);
         }
         pausaBottoni.setVisibile(v);
