@@ -41,7 +41,10 @@ public class MenuScreen extends BaseScreen
 
         // pannello scuro dietro ai bottoni per leggerli meglio
         Image pannello = new Image(Risorse.pannello);
-        pannello.setBounds(462, 40, 296, 190);
+        if (Risorse.isWeb())
+            pannello.setBounds(462, 94, 296, 136);
+        else
+            pannello.setBounds(462, 40, 296, 190);
         pannello.setColor(1, 1, 1, 0.9f);
         pannello.setTouchable(Touchable.disabled);
         uiStage.addActor(pannello);
@@ -56,9 +59,11 @@ public class MenuScreen extends BaseScreen
         bottoni.aggiungi("NUOVA PARTITA", 480, 112, 260, 44, new Runnable() {
             public void run() { nuovaPartita(); }
         });
-        bottoni.aggiungi("CHIUDI GIOCO", 480, 58, 260, 44, new Runnable() {
-            public void run() { Gdx.app.exit(); }
-        });
+        if (!Risorse.isWeb()) {   // nel browser non si può "chiudere" il gioco
+            bottoni.aggiungi("CHIUDI GIOCO", 480, 58, 260, 44, new Runnable() {
+                public void run() { Gdx.app.exit(); }
+            });
+        }
         if (!salvataggio) {
             bottoni.setAttivo(0, false);
             bottoni.setSelezionato(1);
@@ -111,10 +116,16 @@ public class MenuScreen extends BaseScreen
     @Override
     public boolean keyDown(int keycode)
     {
+        // nel browser l'audio può partire solo dopo che il giocatore ha premuto qualcosa
+        Risorse.musica(false);
         if (uscendo) return false;
         return bottoni.gestisciTasto(keycode);
     }
 
     @Override
-    public void update(float dt) {}
+    public void update(float dt)
+    {
+        if (Gdx.input.justTouched())
+            Risorse.musica(false);
+    }
 }

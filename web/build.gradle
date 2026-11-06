@@ -1,0 +1,63 @@
+// Versione per browser: compila il gioco in JavaScript con TeaVM (gdx-teavm).
+//   Prova in locale:  ./gradlew :web:gdx_teavm_web_js_run   -> http://localhost:8080
+//   Solo build:       ./gradlew :web:gdx_teavm_web_js_build -> web/build/dist/js/webapp
+plugins {
+    id 'java'
+    id 'com.github.xpenatan.gdx-teavm' version '1.6.2'
+}
+
+ext {
+    gdxVersion = '1.14.2'
+    gdxTeaVMVersion = '1.6.2'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://teavm.org/maven/repository/' }
+}
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.github.xpenatan.gdx-teavm:gdx-freetype-web:$gdxTeaVMVersion"
+}
+
+// stesso codice del gioco desktop (cartella ../src), senza il launcher desktop
+sourceSets {
+    main {
+        java {
+            srcDirs = ['../src', 'src/main/java']
+            exclude 'Launcher.java'
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+// Il gioco legge i file come "assets/...": li copiamo dentro build/staging/assets
+// così nel browser i percorsi restano identici a quelli del desktop.
+def stageAssets = tasks.register('stageAssets', Copy) {
+    from rootProject.file('assets')
+    into layout.buildDirectory.dir('staging/assets')
+}
+
+gdxTeaVM {
+    assets.from(layout.buildDirectory.dir('staging'))
+
+    js {
+        mainClass.set('WebLauncher')
+        htmlTitle.set('Sands of Time')
+        htmlWidth.set(800)
+        htmlHeight.set(480)
+        optimization.set(org.teavm.gradle.api.OptimizationLevel.BALANCED)
+        obfuscated.set(true)
+    }
+}
+
+tasks.configureEach { t ->
+    if (t.name.startsWith('gdx_teavm') || t.name.toLowerCase().contains('teavm'))
+        t.dependsOn(stageAssets)
+}

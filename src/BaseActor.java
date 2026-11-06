@@ -511,51 +511,6 @@ public class BaseActor extends Actor
     }
     
     // ----------------------------------------------
-    // Metodi Liste di oggetti BaseActor
-    // ----------------------------------------------
-
-    /**
-     *  Recupera un elenco di tutte le istanze dell'oggetto dalla fase specificata con il nome di classe specificato
-     *  o la cui classe estende la classe con il nome specificato.
-     *  Se non esiste alcuna istanza, restituisce un elenco vuoto.
-     *  Utile quando si codificano interazioni tra diversi tipi di oggetti di gioco nel metodo di aggiornamento.
-     *  @param stage Stage contenente tutte le istanze di BaseActor
-     *  @param className il nome della classe che estende BaseActor
-     *  @return lista degli oggetti richiesti
-     */
-    public static ArrayList<BaseActor> getList(Stage stage, String className)
-    {
-        ArrayList<BaseActor> list = new ArrayList<BaseActor>();
-        
-        Class theClass = null;
-        try
-        {  theClass = Class.forName(className);  }
-        catch (Exception error)
-        {
-            error.printStackTrace();
-            return list;
-        }
-        
-        for (Actor a : stage.getActors())
-        {
-            if ( theClass.isInstance( a ) )
-                list.add( (BaseActor)a );
-        }
-
-        return list;
-    }
-
-    /**
-     *  Restituisce il numero di oggetti di una specifica istanza
-     *  @param className il nome della classe che estende BaseActor
-     *  @return numero di istanze della classe
-     */
-    public static int count(Stage stage, String className)
-    {
-        return getList(stage, className).size();
-    }
-    
-    // ----------------------------------------------
     // Metodi act e draw
     // ----------------------------------------------
 

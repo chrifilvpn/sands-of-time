@@ -305,7 +305,8 @@ public class LevelScreen extends BaseScreen
         pausaBottoni.aggiungi("RIPRENDI",         270, 330, 260, 36, new Runnable() { public void run() { alternaPausa(); } });
         pausaBottoni.aggiungi("RICOMINCIA LIVELLO", 270, 286, 260, 36, new Runnable() { public void run() { riprova(); } });
         pausaBottoni.aggiungi("MENU PRINCIPALE",  270, 242, 260, 36, new Runnable() { public void run() { vaiAlMenu(); } });
-        pausaBottoni.aggiungi("CHIUDI GIOCO",     270, 198, 260, 36, new Runnable() { public void run() { Gdx.app.exit(); } });
+        if (!Risorse.isWeb())
+            pausaBottoni.aggiungi("CHIUDI GIOCO", 270, 198, 260, 36, new Runnable() { public void run() { Gdx.app.exit(); } });
         pausaAiuto = etichettaUi(
                 "FRECCE / A D    muoviti\n" +
                 "SPAZIO / W      salta\n" +

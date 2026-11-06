@@ -52,9 +52,11 @@ public abstract class BaseGame extends Game
 
     private static void alternaSchermoIntero()
     {
-        if (Gdx.graphics.isFullscreen())
-            Gdx.graphics.setWindowedMode(800, 480);
-        else
+        if (Gdx.graphics.isFullscreen()) {
+            // nel browser si esce dallo schermo intero con ESC (lo gestisce il browser)
+            if (!Risorse.isWeb())
+                Gdx.graphics.setWindowedMode(800, 480);
+        } else
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
     }
 

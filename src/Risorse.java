@@ -47,6 +47,12 @@ public class Risorse
     public static final float VOLUME_EFFETTI = 0.6f;
     private static boolean muto = false;
 
+    /** true se il gioco gira nel browser (versione web). */
+    public static boolean isWeb()
+    {
+        return Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
+    }
+
     /** Numero di livelli presenti nella cartella assets (mappaN_presente.tmx). */
     public static int numeroLivelli;
 
