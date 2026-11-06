@@ -1,0 +1,14 @@
+# compilazione
+out/
+build/
+.gradle/
+*.class
+
+# IntelliJ: file personali di ciascuno
+.idea/workspace.xml
+.idea/shelf/
+.idea/usage.statistics.xml
+
+# sistema
+.DS_Store
+Thumbs.db

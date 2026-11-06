@@ -1,0 +1,51 @@
+// Build Gradle facoltativa: permette di compilare e avviare il gioco su qualsiasi PC
+// senza la cartella ../GdxLibs (le librerie libGDX vengono scaricate da Maven Central).
+//   Avvio:            ./gradlew run        (Windows: gradlew.bat run)
+//   Jar eseguibile:   ./gradlew dist       -> build/libs/SandsOfTime.jar (da avviare dalla cartella del progetto)
+plugins {
+    id 'java'
+    id 'application'
+}
+
+ext.gdxVersion = '1.12.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+}
+
+sourceSets {
+    main {
+        java { srcDirs = ['src'] }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 11
+}
+
+application {
+    mainClass = 'Launcher'
+}
+
+// il gioco carica i file da "assets/...", quindi va avviato dalla cartella del progetto
+tasks.named('run') {
+    workingDir = rootProject.projectDir
+}
+
+tasks.register('dist', Jar) {
+    archiveFileName = 'SandsOfTime.jar'
+    manifest { attributes 'Main-Class': 'Launcher' }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
